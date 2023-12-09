@@ -47,5 +47,6 @@ public class MainPageTest {
         assertEquals(input, searchPageField.getAttribute("value"));
     }
 
+    
 
 }
