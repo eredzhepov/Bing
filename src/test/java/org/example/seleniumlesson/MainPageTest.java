@@ -11,6 +11,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.time.Duration;
+import java.util.List;
 
 public class MainPageTest {
     private WebDriver driver;
@@ -23,7 +24,7 @@ public class MainPageTest {
         options.addArguments("--remote-allow-origins=*");
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(6));
         driver.get("https://www.bing.com/");
 
 
@@ -46,7 +47,26 @@ public class MainPageTest {
         WebElement searchPageField = driver.findElement(By.cssSelector("#sb_form_q"));
         assertEquals(input, searchPageField.getAttribute("value"));
     }
+    @Test
+    public void getAllResults() {
+        String searchWord = "Selenium";
+        WebElement inputField = driver.findElement(By.xpath("//*[@name = 'q']"));
+        inputField.sendKeys(searchWord);
+        inputField.submit();
+        List<WebElement> results = driver.findElements(By.cssSelector("h2  > a[href]"));
 
-    
+        clickElement(results, 0);
+        String url = driver.getCurrentUrl();
+        System.out.println(driver.getCurrentUrl());
+        assertEquals("https://www.selenium.dev/", url, "Не перешел по юрлу селениума");
+
+    }
+
+    public void clickElement(List<WebElement> results, int num) {
+        results.get(num).click();
+        System.out.println("Вы нажали на " + num + " элемент");
+    }
+
+
 
 }
