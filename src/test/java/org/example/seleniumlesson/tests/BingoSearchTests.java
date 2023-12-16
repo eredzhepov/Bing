@@ -1,5 +1,8 @@
-package org.example.seleniumlesson;
+package org.example.seleniumlesson.tests;
 
+
+import org.example.seleniumlesson.pages.MainPage;
+import org.example.seleniumlesson.pages.ResultPage;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,11 +12,15 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-public class MainPageTest {
+public class BingoSearchTests {
     private WebDriver driver;
 
 
@@ -39,34 +46,26 @@ public class MainPageTest {
     public void search() {
         String input = "Selenium";
 
-        WebElement searchField = driver.findElement(By.cssSelector("#sb_form_q"));
-        searchField.sendKeys("Selenium");
-        searchField.submit();
+        MainPage mp = new MainPage(driver);
+        mp.sendText(input);
 
+        ResultPage rs = new ResultPage(driver);
 
-        WebElement searchPageField = driver.findElement(By.cssSelector("#sb_form_q"));
-        assertEquals(input, searchPageField.getAttribute("value"));
+        assertEquals(input, rs.getFieldValue(), "Текст не совпал");
     }
     @Test
     public void getAllResults() {
-        String searchWord = "Selenium";
-        WebElement inputField = driver.findElement(By.xpath("//*[@name = 'q']"));
-        inputField.sendKeys(searchWord);
-        inputField.submit();
-        List<WebElement> results = driver.findElements(By.cssSelector("h2  > a[href]"));
+        String input = "Selenium";
+        MainPage mp = new MainPage(driver);
+        mp.sendText(input);
 
-        clickElement(results, 0);
-        String url = driver.getCurrentUrl();
+        ResultPage rs = new ResultPage(driver);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(6));
+        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("h2 > a[href]")));
+        rs.clickElement(0);
         System.out.println(driver.getCurrentUrl());
-        assertEquals("https://www.selenium.dev/", url, "Не перешел по юрлу селениума");
+
+        assertEquals("https://www.selenium.dev/", driver.getCurrentUrl(), "Не перешел по юрлу селениума");
 
     }
-
-    public void clickElement(List<WebElement> results, int num) {
-        results.get(num).click();
-        System.out.println("Вы нажали на " + num + " элемент");
-    }
-
-
-
 }
